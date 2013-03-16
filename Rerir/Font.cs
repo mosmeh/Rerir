@@ -4,6 +4,7 @@ using System.ComponentModel;
 using System.Drawing;
 using System.Drawing.Text;
 using System.Linq;
+using System.Windows.Forms;
 
 namespace Rerir
 {
@@ -88,6 +89,25 @@ namespace Rerir
         public static List<FontEnclosure> GetFontEnclosures()
         {
             return enclosures;
+        }
+    }
+
+    public static class FontFileChecker
+    {
+        public static bool IsValidFontFile(string path)
+        {
+            using (var fontcln = new PrivateFontCollection())
+            {
+                try
+                {
+                    fontcln.AddFontFile(path);
+                    return true;
+                }
+                catch (System.IO.FileNotFoundException)
+                {
+                    return false;
+                }
+            }
         }
     }
 

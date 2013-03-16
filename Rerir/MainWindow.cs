@@ -15,6 +15,12 @@ namespace Rerir
             args.ForEach(x => this.ViewFontInfo(x));
         }
 
+        private void MainWindow_Shown(object sender, EventArgs e)
+        {
+            if (tabControl.TabCount == 0)
+                this.Close();
+        }
+
         private void MainWindow_FormClosing(object sender, FormClosingEventArgs e)
         {
             ConfigStore.Save();
@@ -22,17 +28,24 @@ namespace Rerir
 
         private void ViewFontInfo(string path)
         {
-            var fontecr = new FontEnclosure(path);
-            FontStore.Add(fontecr);
-
-            var tabpage = new TabPage(fontecr.GetFontInfo().Name);
-            tabpage.Controls.Add(new SampleView()
+            if (FontFileChecker.IsValidFontFile(path))
             {
-                Dock = DockStyle.Fill,
-                ViewFont = fontecr.GetFont(),
-                FontInfo = fontecr.GetFontInfo()
-            });
-            tabControl.TabPages.Add(tabpage);
+                var fontecr = new FontEnclosure(path);
+                FontStore.Add(fontecr);
+
+                var tabpage = new TabPage(fontecr.GetFontInfo().Name);
+                tabpage.Controls.Add(new SampleView()
+                {
+                    Dock = DockStyle.Fill,
+                    ViewFont = fontecr.GetFont(),
+                    FontInfo = fontecr.GetFontInfo()
+                });
+                tabControl.TabPages.Add(tabpage);
+            }
+            else
+            {
+                MessageBox.Show("無効なフォント ファイルが指定されました", "エラー", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
         }
 
         private void exitToolStripMenuItem_Click(object sender, EventArgs e)
